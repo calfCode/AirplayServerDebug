@@ -28,7 +28,7 @@ public:
     int32_t startAudio();
     void stopAudio() ;
 
-    void addPacket(pcm_data_struct pcmDataStruct);
+    void addPacket(audio_decode_struct pcmDataStruct);
 
 private:
 //    std::mutex         mLock;
@@ -37,7 +37,7 @@ private:
     static int constexpr kChannelCount = 2;
     static int constexpr kSampleRate = 44100;
 
-    std::queue<pcm_data_struct> audioQueque;
+    std::queue<audio_decode_struct> audioQueque;
 };
 
 

@@ -31,6 +31,6 @@ void PcmPlayer::stopAudio() {
 //    }
 }
 
-void PcmPlayer::addPacket(pcm_data_struct pcmDataStruct) {
+void PcmPlayer::addPacket(audio_decode_struct pcmDataStruct) {
 //    audioQueque.push(pcmDataStruct);
 }

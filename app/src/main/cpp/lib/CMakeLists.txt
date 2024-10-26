@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-include_directories(crypto curve25519 ed25519 playfair plist/plist
+include_directories(crypto curve25519 ed25519 playfair llhttp plist/plist
         fdk-aac/libAACdec/include
         fdk-aac/libAACenc/include
         fdk-aac/libFDK/include
@@ -14,7 +14,9 @@ include_directories(crypto curve25519 ed25519 playfair plist/plist
         #fdk-aac/libSACdec/include
         #fdk-aac/libSACenc/include
         )
-
+#include_directories(../openssl/arm64-v8a/include)
+include_directories(../openssl/${ANDROID_ABI}/include)
+include_directories(./plist)
 message("enter top level")
 aux_source_directory(. play_src)
 set(DIR_SRCS ${play_src})
@@ -32,4 +34,5 @@ target_link_libraries( play-lib
         playfair
         plist
         fdk-aac
+        llhttp
         ${log-lib})

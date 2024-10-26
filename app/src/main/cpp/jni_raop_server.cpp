@@ -32,7 +32,7 @@ static bool isUseOpenSL = false;
 OpenSLRender *openSLRender;
 PcmPlayer *pcmPlayer;
 static bool isUseOboe = false;
-void OnRecvAudioData(void *observer, pcm_data_struct *data) {
+void OnRecvAudioData(void *observer, audio_decode_struct *data) {
     if (isUseOpenSL) {
         if (openSLRender!= nullptr){
             unsigned short *buffer =(unsigned short *) malloc(data->data_len* sizeof(unsigned short));
@@ -56,7 +56,7 @@ void OnRecvAudioData(void *observer, pcm_data_struct *data) {
         jshortArray sarr = jniEnv->NewShortArray(data->data_len);
         if (sarr == NULL) return;
         jniEnv->SetShortArrayRegion(sarr, (jint) 0, data->data_len, (jshort *) data->data);
-        jniEnv->CallVoidMethod(obj, onRecvVideoDataM, sarr, data->pts);
+        jniEnv->CallVoidMethod(obj, onRecvVideoDataM, sarr, data->ntp_time_local);
         jniEnv->DeleteLocalRef(sarr);
         g_JavaVM->DetachCurrentThread();
     }
@@ -71,7 +71,7 @@ void OnRecvVideoData(void *observer, h264_decode_struct *data) {
             if (h264_data != nullptr) {
                 h264_data->data = (unsigned char *) malloc(data->data_len);
                 h264_data->data_len = data->data_len;
-                h264_data->pts = data->pts;
+                h264_data->pts = data->ntp_time_local;
                 LOGD("OnRecvVideoData h264_data->pts=%ld", h264_data->pts);
                 memcpy(h264_data->data, data->data, data->data_len);
                 h264decoder->addPacket(*h264_data);
@@ -88,8 +88,8 @@ void OnRecvVideoData(void *observer, h264_decode_struct *data) {
         jbyteArray barr = jniEnv->NewByteArray(data->data_len);
         if (barr == NULL) return;
         jniEnv->SetByteArrayRegion(barr, (jint) 0, data->data_len, (jbyte *) data->data);
-        jniEnv->CallVoidMethod(obj, onRecvVideoDataM, barr, data->frame_type,
-                               data->pts, data->pts);
+        jniEnv->CallVoidMethod(obj, onRecvVideoDataM, barr, 0,
+                               data->ntp_time_local, data->ntp_time_local);
         jniEnv->DeleteLocalRef(barr);
         g_JavaVM->DetachCurrentThread();
     }
@@ -98,17 +98,17 @@ void OnRecvVideoData(void *observer, h264_decode_struct *data) {
 }
 
 extern "C" void
-audio_process(void *cls, pcm_data_struct *data) {
+audio_process(void *cls, raop_ntp_t *ntp, audio_decode_struct *data) {
     OnRecvAudioData(cls, data);
 }
 
 extern "C" void
-audio_set_volume(void *cls, void *opaque, float volume) {
+audio_set_volume(void *cls, float volume) {
 
 }
 
 extern "C" void
-video_process(void *cls, h264_decode_struct *data) {
+video_process(void *cls,  raop_ntp_t *ntp,h264_decode_struct *data) {
     OnRecvVideoData(cls, data);
 }
 
@@ -198,7 +198,7 @@ Java_com_fang_myapplication_RaopServer_start(JNIEnv *env, jobject object) {
     raop_cbs.audio_process = audio_process;
     raop_cbs.audio_set_volume = audio_set_volume;
     raop_cbs.video_process = video_process;
-    raop = raop_init(10, &raop_cbs);
+    raop = raop_init(&raop_cbs);
     if (raop == NULL) {
         LOGE("raop = NULL");
         return 0;
@@ -207,7 +207,7 @@ Java_com_fang_myapplication_RaopServer_start(JNIEnv *env, jobject object) {
     }
 
     raop_set_log_callback(raop, log_callback, NULL);
-    raop_set_log_level(raop, RAOP_LOG_DEBUG);
+//    raop_set_log_level(raop, RAOP_LOG_DEBUG);
 
     unsigned short port = 0;
     unsigned short airplayPort =0;

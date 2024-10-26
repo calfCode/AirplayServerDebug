@@ -26,6 +26,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sys/endian.h>
 #include "dnssd_ipc.h"
 
 #if defined(_WIN32)
