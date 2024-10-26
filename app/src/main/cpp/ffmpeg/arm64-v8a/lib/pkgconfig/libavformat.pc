@@ -1,0 +1,14 @@
+prefix=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a
+exec_prefix=${prefix}
+libdir=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a/lib
+includedir=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.45.100
+Requires: libavcodec >= 58.91.100, libswresample >= 3.7.100, libavutil >= 56.51.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -lm -lz
+Libs.private: 
+Cflags: -I${includedir}

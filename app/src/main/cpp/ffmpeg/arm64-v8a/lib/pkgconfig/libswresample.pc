@@ -1,0 +1,14 @@
+prefix=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a
+exec_prefix=${prefix}
+libdir=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a/lib
+includedir=/fcssd2/wusonghua/work/bruce/ffmpeg_source/ffmpeg-4.3.5/android/armv8-a/include
+
+Name: libswresample
+Description: FFmpeg audio resampling library
+Version: 3.7.100
+Requires: libavutil >= 56.51.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lswresample -lm
+Libs.private: 
+Cflags: -I${includedir}
